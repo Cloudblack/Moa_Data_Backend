@@ -1,0 +1,142 @@
+{
+	"1": {
+		"job_name": "Job1",
+		"task_list": {
+			"read": [
+				"drop"
+			],
+			"drop": [
+				"write"
+			],
+			"write": []
+		},
+		"property": {
+			"read": {
+				"task_name": "read",
+				"filename": "path/to/a1.csv",
+				"sep": ","
+			},
+			"drop": {
+				"task_name": "drop",
+				"column_name": "date"
+			},
+			"write": {
+				"task_name": "write",
+				"filename": "path/to/b1.csv",
+				"sep": ","
+			}
+		}
+	},
+	"2": {
+		"job_name": "Job2",
+		"task_list": {
+			"read": [
+				"drop"
+			],
+			"drop": [
+				"write"
+			],
+			"write": []
+		},
+		"property": {
+			"read": {
+				"task_name": "read",
+				"filename": "path/to/a2.csv",
+				"sep": ","
+			},
+			"drop": {
+				"task_name": "drop",
+				"column_name": "date"
+			},
+			"write": {
+				"task_name": "write",
+				"filename": "path/to/b2.csv",
+				"sep": ","
+			}
+		}
+	},
+	"3": {
+		"job_name": "Job3",
+		"task_list": {
+			"read": [
+				"drop"
+			],
+			"drop": [
+				"write"
+			],
+			"write": []
+		},
+		"property": {
+			"read": {
+				"task_name": "read",
+				"filename": "path/to/a3.csv",
+				"sep": ","
+			},
+			"drop": {
+				"task_name": "drop",
+				"column_name": "date"
+			},
+			"write": {
+				"task_name": "write",
+				"filename": "path/to/b3.csv",
+				"sep": ","
+			}
+		}
+	},
+	"4": {
+		"job_name": "Job4",
+		"task_list": {
+			"read": [
+				"drop"
+			],
+			"drop": [
+				"write"
+			],
+			"write": []
+		},
+		"property": {
+			"read": {
+				"task_name": "read",
+				"filename": "path/to/a4.csv",
+				"sep": ","
+			},
+			"drop": {
+				"task_name": "drop",
+				"column_name": "date"
+			},
+			"write": {
+				"task_name": "write",
+				"filename": "path/to/b4.csv",
+				"sep": ","
+			}
+		}
+	},
+	"5": {
+		"job_name": "Job6",
+		"task_list": {
+			"read": [
+				"drop"
+			],
+			"drop": [
+				"write"
+			],
+			"write": []
+		},
+		"property": {
+			"read": {
+				"task_name": "read",
+				"filename": "path/to/a6.csv",
+				"sep": ","
+			},
+			"drop": {
+				"task_name": "drop",
+				"column_name": "date"
+			},
+			"write": {
+				"task_name": "write",
+				"filename": "path/to/b6.csv",
+				"sep": ","
+			}
+		}
+	}
+}
