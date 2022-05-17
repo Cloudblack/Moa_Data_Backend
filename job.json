@@ -1,10 +1,30 @@
 {
-	"Avante": {
-		"price": "3000",
-		"year": "2014"
-	},
-	"ds": {
-		"price": "50cxzc00",
-		"year": "2015"
+	"2": {
+		"job_name": "Job4",
+		"task_list": {
+			"read": [
+				"drop\u3147\u3147\u3147\u3147"
+			],
+			"drop": [
+				"write"
+			],
+			"write": []
+		},
+		"property": {
+			"read": {
+				"task_name": "read",
+				"filename": "path/to/a.csv",
+				"sep": ","
+			},
+			"drop": {
+				"task_name": "drop",
+				"column_name": "date"
+			},
+			"write": {
+				"task_name": "write",
+				"filename": "path/to/b.csv",
+				"sep": ","
+			}
+		}
 	}
 }
