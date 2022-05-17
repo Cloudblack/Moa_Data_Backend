@@ -10,14 +10,13 @@ app = Flask(__name__)
 류성훈
 """
 
+# 전달 받은 job 정보를 job.json 파일에 저장
 @app.route('/job', methods=['GET','POST'])
 def post_job():
-    
     # Job file 조회
     if request.method == 'GET':
         with open('job.json','r') as f:
             json_data = json.load(f)
-        print(json.dumps(json_data, indent="\t"))
         return json_data
 
     # Job file 저장
@@ -38,6 +37,7 @@ def post_job():
 
         return job_file
     
+# 전달 받은 job_id를 job.json 파일에 찾아 삭제/수정
 @app.route('/job/<string:id>', methods=['DELETE','PUT'])
 def update_delete_job(id):
 
@@ -46,11 +46,11 @@ def update_delete_job(id):
         with open('job.json', 'r') as f:
             job_file = json.load(f)
             
-        if id in job_file.keys():
-            del(job_file[id])
-        else:
-            print("삭제하려는 데이터의 job_id가 존재하지 않습니다.")
+        if id not in job_file.keys():
+            return jsonify("삭제하려는 데이터의 job_id가 존재하지 않습니다.") # 예외처리 해주기
         
+        del(job_file[id])
+
         with open("job.json", "w") as json_file:
             json.dump(job_file, json_file, indent="\t")
 
@@ -63,19 +63,32 @@ def update_delete_job(id):
         with open('job.json', 'r') as f:
             job_file = json.load(f)
 
-        if id in job_file.keys():
-            job_file[id] = {
+        if id not in job_file.keys():
+            return jsonify("수정하려는 데이터의 job_id가 존재하지 않습니다.") # 예외처리 해주기
+
+        job_file[id] = {
                             "job_name": data['job_name'],
                             "task_list": data['task_list'],
                             "property": data['property']
-                            }
-        else:
-            print("수정하려는 데이터의 job_id가 존재하지 않습니다.")
-
+                        }
         with open("job.json", "w") as json_file:
             json.dump(job_file, json_file, indent="\t")
 
         return job_file[id]
+
+# 전달 받은 job_id를 job.json 파일에서 찾아 task들을 실행
+@app.route('/job/<string:id>/start', methods=['GET'])
+def start_job(id):
+    with open('job.json', 'r') as f:
+        job_file = json.load(f)
+    
+    if id not in job_file.keys():
+        return jsonify("실행하려는 데이터의 job_id가 존재하지 않습니다.") # 예외처리 해주기
+
+    
+    print(job_file)
+    return job_file
+    
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=80)
