@@ -55,7 +55,7 @@ def update_delete_job(id):
         with open("job.json", "w") as json_file:
             json.dump(job_file, json_file, indent="\t")
 
-        return job_file
+        return job_file # 삭제에 성공했다는 처리
     
     # 해당 job_id 데이터 수정
     elif request.method == 'PUT':
@@ -85,10 +85,10 @@ def start_job(id):
     
     if id not in job_file.keys():
         return jsonify("실행하려는 데이터의 job_id가 존재하지 않습니다.") # 예외처리 해주기
-    # 
+    
     job_file = job_file[str(id)]
 
-    # task_list에서 task_order추출 (지금은 read가 먼저 시작된다고 가정)
+    # task_list에서 task_order추출 (read가 먼저 시작된다고 가정)
     task_list = job_file["task_list"]
     task_order = []
 
@@ -100,8 +100,25 @@ def start_job(id):
         else:
             task_order.append(cur)
             cur = task_list[cur][0]
-        
-    print(task_order)
+
+    tasks_property = job_file["property"]
+
+    # task 기능별로 실행
+    for task in task_order:
+        task_property = tasks_property[task]
+        if task == 'read':
+            # read path/to/a.csv to DataFrame
+            df = pd.read_csv(task_property['filename'], sep=task_property['sep'])
+            # return df.to_json()
+        elif task == 'drop':
+            if task_property["column_name"] not in list(df.columns):
+                print("삭제하려는 column이 존재하지 않습니다.") # 예외처리 필요
+            else:
+                df = df.drop([task_property["column_name"]], axis='columns')
+                # return df.to_json()
+        elif task == 'write':
+            df.to_csv(task_property['filename'], sep=task_property['sep'], na_rep='NaN', index=False)
+            return df.to_json()
 
     return job_file
     
