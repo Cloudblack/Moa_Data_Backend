@@ -3,6 +3,7 @@ import re
 from flask import Flask, request, jsonify
 from flask_api import status
 from flask_restx import Api, resource
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -26,7 +27,7 @@ def post_job():
         with open('job.json', 'r') as f:
             job_file = json.load(f)
     
-        job_file[data['job_id']] = {
+        job_file[str(data['job_id'])] = {
                                 "job_name": data['job_name'],
                                 "task_list": data['task_list'],
                                 "property": data['property']
@@ -84,9 +85,24 @@ def start_job(id):
     
     if id not in job_file.keys():
         return jsonify("실행하려는 데이터의 job_id가 존재하지 않습니다.") # 예외처리 해주기
+    # 
+    job_file = job_file[str(id)]
 
-    
-    print(job_file)
+    # task_list에서 task_order추출 (지금은 read가 먼저 시작된다고 가정)
+    task_list = job_file["task_list"]
+    task_order = []
+
+    cur = 'read'
+    while True:
+        if task_list[cur] == []:
+            task_order.append(cur)
+            break
+        else:
+            task_order.append(cur)
+            cur = task_list[cur][0]
+        
+    print(task_order)
+
     return job_file
     
 
