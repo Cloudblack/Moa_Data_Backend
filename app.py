@@ -9,10 +9,11 @@ from job import Job
 app = Flask(__name__)
 api = Api(  app,
             version='1.0',
-            title='Moa-Data-API',
-            description='Moa-Data 과제 swagger',
-            terms_of_service="https://github.com/wanted-pre-onboarding-2nd-BE-Team-D/004_Moa_Data",
-            doc="/api-docs")
+            title='Moa_Data API',
+            description='모아데이타 과제 API구현',
+            contact='rsh1994@naver.com',
+            doc="/api-docs",
+            )
 
     
 api.add_namespace(Job, '/jobs')

@@ -12,7 +12,6 @@ import pandas as pd
     
 Job = Namespace('Job')
 
-
 job_model =Job.model('job_model', {
     'job_json': fields.String(description='input job-data')
 })
