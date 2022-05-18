@@ -1,30 +1,25 @@
 from flask import Flask, request
 from flask_restx import Resource, Api
 import json
+from utils.utils import *
 
 app = Flask(__name__)
 api = Api(app)
 
-
-def check(create_data, job_data):
-    if create_data in list(job_data.values()):
-        return {"MESSAGE": "DUPLICATE_VALUE"}
-    data_key = job_data[list(job_data.keys())[0]]
-    if create_data.keys() != data_key.keys():
-        return {"MESSAGE": "MISSING_VALUE"}
-    if create_data["property"].keys() != data_key["property"].keys():
-        return {"MESSAGE": "MISSING_VALUE"}
+check = CheckData()
 
 
 @api.route("/api/data")
-class DataCR(Resource):
-    def __init__(self, nothing):
-        with open("job_change.json", "r") as f:
-            self.job_data = json.load(f)
-        self.keys = list(self.job_data.keys())
+class JobDataCR(Resource):
+    """
+    json 형식의 data를 추가한다
+    data_check를 통해 중복과 입력할때 key가 없으면 추가할 수 없다
+    """
 
-    def get(self):
-        return self.job_data
+    def __init__(self, nothing):
+        self.json_excutor = JsonExcutor()
+        self.job_data = self.json_excutor.get_data()
+        self.keys = list(self.job_data.keys())
 
     def post(self):
         """
@@ -58,10 +53,8 @@ class DataCR(Resource):
         }
 
         """
-
         create_data = request.json
-        print(create_data)
-        result = check(create_data, self.job_data)
+        result = check.data(create_data, self.job_data)
         if result:
             return result
         # 마지막 id +1 아니면 빈칸 채워야할까?
@@ -69,39 +62,72 @@ class DataCR(Resource):
 
         self.job_data[job_id] = create_data
 
-        with open("job_change.json", "w", encoding="utf-8") as f:
-            json.dump(self.job_data, f, indent="\t")
+        self.json_excutor.save_data()
 
         return self.job_data[job_id]
 
 
 @api.route("/api/data/<int:id>")
-class DataRUD(Resource):
+class JobDataRUD(Resource):
+    """
+    id를 입력받아 자세히보기 , 수정 , 삭제를 수행한다
+    """
+
     def __init__(self, nothing):
-        with open("job_change.json", "r") as f:
-            self.job_data = json.load(f)
+        self.json_excutor = JsonExcutor()
+        self.job_data = self.json_excutor.get_data()
 
     def get(self, id):
+        check_id = check.id(self.job_data, id)
+        if check_id:
+            return check_id
         return self.job_data[str(id)]
 
     def put(self, id):
-        id = str(id)      
-        create_data = request.json       
-        result = check(create_data, self.job_data)
+        check_id = check.id(self.job_data, id)
+        if check_id:
+            return check_id
+
+        id = str(id)
+        create_data = request.json
+        result = check.data(create_data, self.job_data)
+
         if result:
             return result
 
         self.job_data[id] = create_data
-        with open("job_change.json", "w", encoding="utf-8") as f:
-            json.dump(self.job_data, f, indent="\t")
+        self.json_excutor.save_data()
         return self.job_data[id]
 
     def delete(self, id):
-        self.job_data.pop(str(id))
-        with open("job_change.json", "w", encoding="utf-8") as f:
-            json.dump(self.job_data, f, indent="\t")
+        check_id = check.id(self.job_data, id)
+        if check_id:
+            return check_id
+        return self.json_excutor.save_data()
 
-        return "Success Delete"
+
+@api.route("/api/data/<int:id>/run")
+class JobDataRun(Resource):
+    def __init__(self, nothing):
+        with open("job_change.json", "r") as f:
+            self.job_data = json.load(f)
+
+    def _get_order(self, id):
+        finder = FindOrder(self.job_data[str(id)]["task_list"])
+        return finder()
+
+    def get(self, id):
+        check_id = check.id(self.job_data, id)
+        if check_id:
+            return check_id
+
+        task_excutor = TaskExcutor(self.job_data[str(id)])
+        if task_excutor.exist:
+            return task_excutor.exist
+
+        for task in self._get_order(id):
+            getattr(task_excutor, task)()
+        return "FINISH_WORK"
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 {
 	"2": {
-		"job_name": "Job5",
+		"job_name": "Job2",
 		"task_list": {
 			"read": [
 				"drop"
@@ -13,7 +13,7 @@
 		"property": {
 			"read": {
 				"task_name": "read",
-				"filename": "path/to/a6.csv",
+				"filename": "raw/a2.csv",
 				"sep": ","
 			},
 			"drop": {
@@ -22,7 +22,7 @@
 			},
 			"write": {
 				"task_name": "write",
-				"filename": "path/to/b6.csv",
+				"filename": "result/b2.csv",
 				"sep": ","
 			}
 		}
@@ -41,7 +41,7 @@
 		"property": {
 			"read": {
 				"task_name": "read",
-				"filename": "path/to/a3.csv",
+				"filename": "raw/a3.csv",
 				"sep": ","
 			},
 			"drop": {
@@ -50,7 +50,7 @@
 			},
 			"write": {
 				"task_name": "write",
-				"filename": "path/to/b3.csv",
+				"filename": "result/b3.csv",
 				"sep": ","
 			}
 		}
@@ -69,7 +69,7 @@
 		"property": {
 			"read": {
 				"task_name": "read",
-				"filename": "path/to/a4.csv",
+				"filename": "raw/a4.csv",
 				"sep": ","
 			},
 			"drop": {
@@ -78,12 +78,40 @@
 			},
 			"write": {
 				"task_name": "write",
-				"filename": "path/to/b4.csv",
+				"filename": "result/b4.csv",
 				"sep": ","
 			}
 		}
 	},
 	"5": {
+		"job_name": "Job5",
+		"task_list": {
+			"read": [
+				"drop"
+			],
+			"drop": [
+				"write"
+			],
+			"write": []
+		},
+		"property": {
+			"read": {
+				"task_name": "read",
+				"filename": "raw/a5.csv",
+				"sep": ","
+			},
+			"drop": {
+				"task_name": "drop",
+				"column_name": "date"
+			},
+			"write": {
+				"task_name": "write",
+				"filename": "result/b5.csv",
+				"sep": ","
+			}
+		}
+	},
+	"6": {
 		"job_name": "Job6",
 		"task_list": {
 			"read": [
@@ -97,7 +125,7 @@
 		"property": {
 			"read": {
 				"task_name": "read",
-				"filename": "path/to/a6.csv",
+				"filename": "raw/a6.csv",
 				"sep": ","
 			},
 			"drop": {
@@ -106,7 +134,35 @@
 			},
 			"write": {
 				"task_name": "write",
-				"filename": "path/to/b6.csv",
+				"filename": "result/b6.csv",
+				"sep": ","
+			}
+		}
+	},
+	"7": {
+		"job_name": "Job7",
+		"task_list": {
+			"read": [
+				"drop"
+			],
+			"drop": [
+				"write"
+			],
+			"write": []
+		},
+		"property": {
+			"read": {
+				"task_name": "read",
+				"filename": "path/to/a7.csv",
+				"sep": ","
+			},
+			"drop": {
+				"task_name": "drop",
+				"column_name": "date"
+			},
+			"write": {
+				"task_name": "write",
+				"filename": "path/to/b7.csv",
 				"sep": ","
 			}
 		}
