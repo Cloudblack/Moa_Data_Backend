@@ -110,33 +110,5 @@
 				"sep": ","
 			}
 		}
-	},
-	"2": {
-		"job_name": "Job2",
-		"task_list": {
-			"read": [
-				"drop"
-			],
-			"drop": [
-				"write"
-			],
-			"write": []
-		},
-		"property": {
-			"read": {
-				"task_name": "read",
-				"filename": "path/to/a.csv",
-				"sep": ","
-			},
-			"drop": {
-				"task_name": "drop",
-				"column_name": "date"
-			},
-			"write": {
-				"task_name": "write",
-				"filename": "path/to/b.csv",
-				"sep": ","
-			}
-		}
 	}
 }
