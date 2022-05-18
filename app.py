@@ -9,8 +9,9 @@ from job import Job
 app = Flask(__name__)
 api = Api(  app,
             version='1.0',
-            title='API문서',
-            description='Swagger문서',
+            title='Moa-Data-API',
+            description='Moa-Data 과제 swagger',
+            terms_of_service="https://github.com/wanted-pre-onboarding-2nd-BE-Team-D/004_Moa_Data",
             doc="/api-docs")
 
     
