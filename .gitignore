@@ -489,3 +489,8 @@ zsdoc/data
 !/tests/_output/.gitkeep
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,visualstudiocode,pycharm,python,zsh,linux,flask
+
+csv/
+func/
+example/
+json/
