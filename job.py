@@ -1,6 +1,6 @@
 import json
 import re
-from flask import request, jsonify
+from flask import Response, request, jsonify
 from flask_restx import Resource, Api, Namespace
 import pandas as pd
 
@@ -20,7 +20,10 @@ class JobPost(Resource):
         
         with open('job.json', 'r') as f:
             job_file = json.load(f)
-    
+
+        if str(data["job_id"]) in list(job_file.keys()):
+            return Response(response="job_id가 이미 존재합니다.", status=400, mimetype="application/json")
+
         job_file[str(data['job_id'])] = {
                                 "job_name": data['job_name'],
                                 "task_list": data['task_list'],
@@ -30,7 +33,7 @@ class JobPost(Resource):
         with open("job.json", "w") as json_file:
             json.dump(job_file, json_file, indent="\t")
 
-        return job_file
+        return Response(response="%s" % data, status=200, mimetype="application/json")
 
 
 # 전달 받은 job_id를 job.json 파일에 찾아 삭제/수정
@@ -42,14 +45,15 @@ class JobUpdateDelete(Resource):
             job_file = json.load(f)
             
         if id not in job_file.keys():
-            return jsonify("삭제하려는 데이터의 job_id가 존재하지 않습니다.") # 예외처리 해주기
+            return Response(response="삭제하려는 job_id가 존재하지 않습니다.", status=400, mimetype="application/json")
         
+        result = job_file[id]
         del(job_file[id])
-
+        print(result)
         with open("job.json", "w") as json_file:
             json.dump(job_file, json_file, indent="\t")
 
-        return job_file # 삭제에 성공했다는 처리
+        return Response(response="%s" % result, status=200, mimetype="application/json")
     
     # 해당 job_id 데이터 수정
     def put(self, id):
@@ -59,7 +63,10 @@ class JobUpdateDelete(Resource):
             job_file = json.load(f)
 
         if id not in job_file.keys():
-            return jsonify("수정하려는 데이터의 job_id가 존재하지 않습니다.") # 예외처리 해주기
+            return Response(response="수정하려는 데이터의 job_id가 존재하지 않습니다.", status=400, mimetype="application/json")
+
+        if str(id) != str(data['job_id']):
+            return Response(response="요청한 job_id와 json의 job_id가 일치하지 않습니다.", status=400, mimetype="application/json")
 
         job_file[id] = {
                             "job_name": data['job_name'],
@@ -69,7 +76,7 @@ class JobUpdateDelete(Resource):
         with open("job.json", "w") as json_file:
             json.dump(job_file, json_file, indent="\t")
 
-        return job_file[id]
+        return Response(response="%s" % job_file[id], status=200, mimetype="application/json")
 
 
 # 전달 받은 job_id를 job.json 파일에서 찾아 task들을 실행
@@ -80,7 +87,7 @@ class JobStart(Resource):
             job_file = json.load(f)
         
         if id not in job_file.keys():
-            return jsonify("실행하려는 데이터의 job_id가 존재하지 않습니다.") # 예외처리 해주기
+            return Response(response="실행하려는 데이터의 job_id가 존재하지 않습니다.", status=400, mimetype="application/json")
         
         job_file = job_file[str(id)]
 
@@ -114,6 +121,6 @@ class JobStart(Resource):
                     # return df.to_json()
             elif task == 'write':
                 df.to_csv(task_property['filename'], sep=task_property['sep'], na_rep='NaN', index=False)
-                return df.to_json()
+                return Response(response="%s" % df.to_json(), status=200, mimetype="application/json")
 
-        return job_file
+        return Response(response="task 실행에 실패하였습니다.", status=400, mimetype="application/json")
