@@ -5,9 +5,9 @@ from flask import Response, request
 from flask_restx import Resource, Namespace, fields
 
 
-'''
+"""
 류성훈
-'''
+"""
 
 Job = Namespace('Job')
 
@@ -45,9 +45,9 @@ class JobPost(Resource):
 
     @Job.expect(job_model)
     def post(self):
-        '''
+        """
             job데이터를 받아 job file에 저장합니다.
-        '''
+        """
         data = json.loads(request.data)
         job_id = str(data['job_id'])
         job_file = JobHandler.read_json()
@@ -69,9 +69,9 @@ class JobPost(Resource):
 @Job.route('/<string:id>')
 class JobUpdateDelete(Resource):
     def delete(self, job_id):
-        '''
+        """
             해당 job_id 데이터를 삭제합니다.
-        '''
+        """
         job_file = JobHandler.read_json()
 
         JobHandler.existence_check(job_id)
@@ -84,9 +84,9 @@ class JobUpdateDelete(Resource):
 
     @Job.expect(job_model)
     def put(self, job_id):
-        '''
+        """
             해당 job_id 데이터를 수정합니다.
-        '''
+        """
         data = json.loads(request.data)
         job_file = JobHandler.read_json()
 
