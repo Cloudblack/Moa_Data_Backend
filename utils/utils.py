@@ -8,8 +8,8 @@ import json
 
 class FindOrder:
     """
-    김석재
-    DAG 를 활용해 순서를 정하는 함수
+        김석재
+        DAG 를 활용해 순서를 정하는 함수
     """
 
     def __init__(self, task_list):
@@ -42,9 +42,9 @@ class FindOrder:
 
     def __call__(self):
         """
-        받은 데이터를 바탕으로 진입차수를 계산한 후
-        큐 스택이 없어질때까지 반목문을 돌며 순서를 찾는다
-        순환되는 데이터라면 큐 스택이 쌓이지않는다
+            받은 데이터를 바탕으로 진입차수를 계산한 후
+            큐 스택이 없어질때까지 반목문을 돌며 순서를 찾는다
+            순환되는 데이터라면 큐 스택이 쌓이지않는다
         """
         for x in self.task_list:
             for y in self.task_list[x]:
@@ -57,16 +57,16 @@ class FindOrder:
             self._find_qu(select_qu)
 
         if not self.result:
-            return "CIRCULATION_VALUE"
+            return "IT_WAS_CYCLE"
 
         return self.result
 
 
 class TaskExcutor:
     """
-    앞서 구한 순서를 바탕으로 task들을 실행 한다
-    이미 실행한 태스크로 결과값이 나와있다면 결과값을 제공
-    (현재는 중복되어있다는 말만 뜸)
+        앞서 구한 순서를 바탕으로 task들을 실행 한다
+        이미 실행한 태스크로 결과값이 나와있다면 결과값을 제공
+        (현재는 중복되어있다는 말만 뜸)
     """
 
     def __init__(self, job_data):
@@ -81,7 +81,7 @@ class TaskExcutor:
         self.df = pd.read_csv(self.in_path)
 
     def drop(self):
-        self.df = self.df.drop("date", axis=1)
+        self.df = self.df.drop([self.job_data["column_name"]], axis=1)
 
     def write(self):
         self.df.to_csv(self.out_path)
@@ -89,11 +89,12 @@ class TaskExcutor:
 
 class JsonExcutor:
     """
-    json file을 불러온다
-    값을 입력(미구현)하지않으면 미리등록한 path로 불러온다
+        json file을 불러온다
+        값을 입력(미구현)하지않으면 미리등록한 path로 불러온다
     """
-
+    
     def __init__(self, json_file="job_change.json"):
+        
         with open(json_file, "r") as f:
             self.job_data = json.load(f)
 

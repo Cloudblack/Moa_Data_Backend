@@ -1,19 +1,27 @@
+from ensurepip import version
+from pydoc import describe
 from flask import Flask, request
 from flask_restx import Resource, Api
 import json
 from utils.utils import *
 
 app = Flask(__name__)
-api = Api(app)
+api = Api(app,
+          version='beta 1.0',
+          title = 'Moa Data API',
+          describe= 'API document',)
+          #doc="/api-docs")
+
+
 
 check = CheckData()
 
 
-@api.route("/api/data")
-class JobDataCR(Resource):
+@api.route("/api/jobs")
+class JobDataC(Resource):
     """
-    json 형식의 data를 추가한다
-    data_check를 통해 중복과 입력할때 key가 없으면 추가할 수 없다
+        json 형식의 data를 추가한다
+        data_check를 통해 중복과 입력할때 key가 없으면 추가할 수 없다
     """
 
     def __init__(self, nothing):
@@ -67,10 +75,10 @@ class JobDataCR(Resource):
         return self.job_data[job_id]
 
 
-@api.route("/api/data/<int:id>")
+@api.route("/api/jobs/<int:id>")
 class JobDataRUD(Resource):
     """
-    id를 입력받아 자세히보기 , 수정 , 삭제를 수행한다
+        id를 입력받아 자세히보기 , 수정 , 삭제를 수행한다
     """
 
     def __init__(self, nothing):
@@ -103,10 +111,11 @@ class JobDataRUD(Resource):
         check_id = check.id(self.job_data, id)
         if check_id:
             return check_id
+        self.job_data.pop(str(id))
         return self.json_excutor.save_data()
 
 
-@api.route("/api/data/<int:id>/run")
+@api.route("/api/jobs/<int:id>/run")
 class JobDataRun(Resource):
     def __init__(self, nothing):
         with open("job_change.json", "r") as f:
