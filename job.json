@@ -140,7 +140,7 @@
 		}
 	},
 	"100": {
-		"job_name": "Job100한글",
+		"job_name": "Job100\ud55c\uae00",
 		"task_list": {
 			"read": [
 				"drop"
@@ -196,7 +196,7 @@
 		}
 	},
 	"102": {
-		"job_name": "Job102한글",
+		"job_name": "Job102\ud55c\uae00",
 		"task_list": {
 			"read": [
 				"drop"
@@ -224,7 +224,7 @@
 		}
 	},
 	"132": {
-		"job_name": "Job132한글",
+		"job_name": "Job132\ud55c\uae00",
 		"task_list": {
 			"read": [
 				"drop"
@@ -253,6 +253,34 @@
 	},
 	"22": {
 		"job_name": "Job23",
+		"task_list": {
+			"read": [
+				"drop"
+			],
+			"drop": [
+				"write"
+			],
+			"write": []
+		},
+		"property": {
+			"read": {
+				"task_name": "read",
+				"filename": "path/to/a.csv",
+				"sep": ","
+			},
+			"drop": {
+				"task_name": "drop",
+				"column_name": "date"
+			},
+			"write": {
+				"task_name": "write",
+				"filename": "path/to/b.csv",
+				"sep": ","
+			}
+		}
+	},
+	"23": {
+		"job_name": "Job23_1",
 		"task_list": {
 			"read": [
 				"drop"
