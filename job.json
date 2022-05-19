@@ -222,5 +222,89 @@
 				"sep": ","
 			}
 		}
+	},
+	"16": {
+		"job_name": "Job16한글",
+		"task_list": {
+			"read": [
+				"drop"
+			],
+			"drop": [
+				"write"
+			],
+			"write": []
+		},
+		"property": {
+			"read": {
+				"task_name": "read",
+				"filename": "path/to/a.csv",
+				"sep": ","
+			},
+			"drop": {
+				"task_name": "drop",
+				"column_name": "date"
+			},
+			"write": {
+				"task_name": "write",
+				"filename": "path/to/b.csv",
+				"sep": ","
+			}
+		}
+	},
+	"17": {
+		"job_name": "Job17한글",
+		"task_list": {
+			"read": [
+				"drop"
+			],
+			"drop": [
+				"write"
+			],
+			"write": []
+		},
+		"property": {
+			"read": {
+				"task_name": "read",
+				"filename": "path/to/a.csv",
+				"sep": ","
+			},
+			"drop": {
+				"task_name": "drop",
+				"column_name": "date"
+			},
+			"write": {
+				"task_name": "write",
+				"filename": "path/to/b.csv",
+				"sep": ","
+			}
+		}
+	},
+	"18": {
+		"job_name": "Job18한글",
+		"task_list": {
+			"read": [
+				"drop"
+			],
+			"drop": [
+				"write"
+			],
+			"write": []
+		},
+		"property": {
+			"read": {
+				"task_name": "read",
+				"filename": "path/to/a.csv",
+				"sep": ","
+			},
+			"drop": {
+				"task_name": "drop",
+				"column_name": "date"
+			},
+			"write": {
+				"task_name": "write",
+				"filename": "path/to/b.csv",
+				"sep": ","
+			}
+		}
 	}
 }

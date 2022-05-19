@@ -1,11 +1,9 @@
-from cgitb import handler
 import json
 import os.path
 from collections import deque
 import pandas as pd
 from flask import Response, request
 from flask_restx import Resource, Namespace, fields
-
 
 """
 류성훈
@@ -31,13 +29,16 @@ class JobHandler:
 
     def duplicate_check(self, job_id):
         job_file = self.read_json()
-        if job_id in list(job_file.keys()):
+        print(job_id)
+        temp = job_file.get(str(job_id))
+        print(temp)
+        if job_file.get(str(job_id), None):
             return Response(response=f'JOB_ID_ALREADY_EXIST', status=400, mimetype='application/json')
 
     def existence_check(self, job_id):
         job_file = self.read_json()
         
-        if job_id in list(job_file.keys()):
+        if job_file.get(str(job_id)):
             return Response(response=f'JOB_ID_DOES_NOT_EXIST', status=404, mimetype='application/json')
 
 
@@ -51,10 +52,10 @@ class JobPost(Resource):
         """
         handler = JobHandler()
         data = json.loads(request.data)
+        print(data)
         job_id = str(data['job_id'])
         job_file = handler.read_json()
         handler.duplicate_check(job_id)
-
         job_file[job_id] = {
             'job_name': data['job_name'],
             'task_list': data['task_list'],

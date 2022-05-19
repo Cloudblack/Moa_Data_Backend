@@ -9,7 +9,7 @@ api = Api(app,
           title='Moa_Data API',
           description='모아데이타 과제 API구현',
           contact='rsh1994@naver.com',
-          doc="/api-docs",
+          doc="/api-docs"
           )
 
 
