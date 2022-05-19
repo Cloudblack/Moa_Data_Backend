@@ -31,9 +31,6 @@ class JobHandler:
 
     def duplicate_check(self, job_id):
         job_file = self.read_json()
-        print(job_file)
-        print(job_id, type(job_id))
-        print(job_file.keys())
         if job_id in list(job_file.keys()):
             return Response(response=f'JOB_ID_ALREADY_EXIST', status=400, mimetype='application/json')
 
@@ -65,7 +62,6 @@ class JobPost(Resource):
         }
 
         handler.write_json(job_file)
-
         return Response(response='JOB_CREATE_SUCCESS', status=201, mimetype='application/json')
 
 
