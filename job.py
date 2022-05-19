@@ -1,112 +1,132 @@
 import json
-import re
-import resource
-from flask import Response, request
-from flask_restx import Resource, Api, Namespace, fields
+
 import pandas as pd
+from flask import Response, request
+from flask_restx import Resource, Namespace, fields
 
 
-"""
+'''
 류성훈
-"""
-    
+'''
+
 Job = Namespace('Job')
 
-job_model =Job.model('job_model', {
+job_model = Job.model('job_model', {
     'job_json': fields.String(description='input job-data')
 })
 
-# 전달 받은 job 정보를 job.json 파일에 저장
+
+class JobHandler:
+    FILE_PATH = './job.json'
+
+    def read_json(self):
+        with open(self.FILE_PATH, 'r') as f:
+            return json.load(f)
+
+    def write_json(self, new_job):
+        with open(self.FILE_PATH, 'w') as f:
+            json.dump(new_job, f, ensure_ascii=False, indent='\t')
+
+    def duplicate_check(self, job_id):
+        job_file = self.read_json()
+
+        if job_id in list(job_file.key()):
+            return Response(response=f'JOB_ID_ALREADY_EXIST', status=400, mimetype='application/json')
+
+    def existence_check(self, job_id):
+        job_file = self.read_json()
+
+        if not job_id in list(job_file.key()):
+            return Response(response=f'JOB_ID_DOES_NOT_EXIST', status=404, mimetype='application/json')
+
+
 @Job.route('')
 class JobPost(Resource):
+
     @Job.expect(job_model)
     def post(self):
-        """
+        '''
             job데이터를 받아 job file에 저장합니다.
-        """
+        '''
         data = json.loads(request.data)
-        
-        with open('job.json', 'r') as f:
-            job_file = json.load(f)
+        job_id = str(data['job_id'])
+        job_file = JobHandler.read_json()
 
-        if str(data["job_id"]) in list(job_file.keys()):
-            return Response(response="job_id가 이미 존재합니다.", status=400, mimetype="application/json")
+        JobHandler.duplicate_check(job_id)
 
-        job_file[str(data['job_id'])] = {
-                                "job_name": data['job_name'],
-                                "task_list": data['task_list'],
-                                "property": data['property']
-                                 }                
+        job_file[job_id] = {
+            'job_name': data['job_name'],
+            'task_list': data['task_list'],
+            'property': data['property']
+        }
 
-        with open("job.json", "w") as json_file:
-            json.dump(job_file, json_file,ensure_ascii=False, indent="\t")
+        JobHandler.write_json(job_file)
 
-        return Response(response="%s" % data, status=200, mimetype="application/json")
+        return Response(response='JOB_CREATE_SUCCESS', status=201, mimetype='application/json')
 
 
 # 전달 받은 job_id를 job.json 파일에 찾아 삭제/수정
 @Job.route('/<string:id>')
 class JobUpdateDelete(Resource):
-    def delete(self, id):
-        """
+    def delete(self, job_id):
+        '''
             해당 job_id 데이터를 삭제합니다.
-        """
-        with open('job.json', 'r') as f:
-            job_file = json.load(f)
-            
-        if id not in job_file.keys():
-            return Response(response="삭제하려는 job_id가 존재하지 않습니다.", status=404, mimetype="application/json")
-        
-        result = job_file[id]
-        del(job_file[id])
-        with open("job.json", "w") as json_file:
-            json.dump(job_file, json_file, indent="\t")
+        '''
+        job_file = JobHandler.read_json()
 
-        return Response(response="%s" % result, status=200, mimetype="application/json")
-    
+        JobHandler.existence_check(job_id)
+
+        result = job_file.pop(job_id)
+
+        JobHandler.write_json(job_file)
+
+        return Response(response=f'{result}', status=204, mimetype='application/json')
+
     @Job.expect(job_model)
-    def put(self, id):
-        """
+    def put(self, job_id):
+        '''
             해당 job_id 데이터를 수정합니다.
-        """
+        '''
         data = json.loads(request.data)
+        job_file = JobHandler.read_json()
 
-        with open('job.json', 'r', encoding='UTF-8') as f:
-            job_file = json.load(f)
+        JobHandler.existence_check(job_id)
 
-        if id not in job_file.keys():
-            return Response(response="수정하려는 데이터의 job_id가 존재하지 않습니다.", status=404, mimetype="application/json")
+        """
+            변경하고자 하는 job_id는 패스 파라미터로 url 에서 따오고
+            변경하고자 하는 내용은 request.body에 담겨옴.
+            이 경우 url에서 따온 job_id와 body에 담긴 job_id를 비교하는 로직
+        """
+        if str(job_id) != str(data['job_id']):
+            return Response(response='요청한 job_id와 json의 job_id가 일치하지 않습니다.', status=400, mimetype='application/json')
 
-        if str(id) != str(data['job_id']):
-            return Response(response="요청한 job_id와 json의 job_id가 일치하지 않습니다.", status=400, mimetype="application/json")
+        job_file[job_id] = {
+            'job_name': data['job_name'],
+            'task_list': data['task_list'],
+            'property': data['property']
+        }
 
-        job_file[id] = {
-                            "job_name": data['job_name'],
-                            "task_list": data['task_list'],
-                            "property": data['property']
-                        }
-        with open("job.json", "w", encoding='UTF-8') as json_file:
-            json.dump(job_file, json_file, ensure_ascii=False, indent="\t")
+        JobHandler.write_json(job_file)
 
-        return Response(response="%s" % job_file[id], status=200, mimetype="application/json")
+        return Response(response=f'{job_file[job_id]}', status=200, mimetype='application/json')
 
 
 @Job.route('/<string:id>/start')
 class JobStart(Resource):
     def get(self, id):
-        """
+        '''
             전달받은 job_id를 job file에서 찾아 task들을 실행합니다.
-        """
+        '''
         with open('job.json', 'r') as f:
             job_file = json.load(f)
-        
+
         if id not in job_file.keys():
-            return Response(response="실행하려는 데이터의 job_id가 존재하지 않습니다.", status=404, mimetype="application/json")
-        
+            return Response(response='실행하려는 데이터의 job_id가 존재하지 않습니다.', status=404, mimetype='application/json')
+
         job_file = job_file[str(id)]
 
         # task_list에서 task_order추출 (read가 먼저 시작된다고 가정)
-        task_list = job_file["task_list"]
+        task_list = job_file['task_list']
         task_order = []
 
         cur = 'read'
@@ -118,21 +138,25 @@ class JobStart(Resource):
                 task_order.append(cur)
                 cur = task_list[cur][0]
 
-        tasks_property = job_file["property"]
+        tasks_property = job_file['property']
 
         # task 기능별로 실행
         for task in task_order:
             task_property = tasks_property[task]
             if task == 'read':
                 # read path/to/a.csv to DataFrame
-                df = pd.read_csv(task_property['filename'], sep=task_property['sep'])
+                df = pd.read_csv(
+                    task_property['filename'], sep=task_property['sep'])
             elif task == 'drop':
-                if task_property["column_name"] not in list(df.columns):
-                    Response(response="삭제하려는 column이 존재하지 않습니다.", status=404, mimetype="application/json")
+                if task_property['column_name'] not in list(df.columns):
+                    Response(response='삭제하려는 column이 존재하지 않습니다.',
+                             status=404, mimetype='application/json')
                 else:
-                    df = df.drop([task_property["column_name"]], axis='columns')
+                    df = df.drop([task_property['column_name']],
+                                 axis='columns')
             elif task == 'write':
-                df.to_csv(task_property['filename'], sep=task_property['sep'], na_rep='NaN', index=False)
-                return Response(response="%s" % df.to_json(), status=200, mimetype="application/json")
+                df.to_csv(
+                    task_property['filename'], sep=task_property['sep'], na_rep='NaN', index=False)
+                return Response(response='%s' % df.to_json(), status=200, mimetype='application/json')
 
-        return Response(response="task 실행에 실패하였습니다.", status=400, mimetype="application/json")
+        return Response(response='task 실행에 실패하였습니다.', status=400, mimetype='application/json')
