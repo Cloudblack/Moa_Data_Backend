@@ -58,6 +58,7 @@ class JobUpdateDelete(Resource):
             return Response(response="삭제하려는 job_id가 존재하지 않습니다.", status=404, mimetype="application/json")
         
         result = job_file[id]
+        print(result)
         del(job_file[id])
         with open("job.json", "w") as json_file:
             json.dump(job_file, json_file, indent="\t")
