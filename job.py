@@ -30,18 +30,19 @@ class JobHandler:
     def duplicate_check(self, job_id):
         job_file = self.read_json()
 
-        if job_id in list(job_file.key()):
-            return Response(response=f'JOB_ID_ALREADY_EXIST', status=400, mimetype='application/json')
+        if job_file.get(job_id, None):
+            return Response(response=f'JOB_ID_ALREADY_EXIST', status=409, mimetype='application/json')
 
     def existence_check(self, job_id):
         job_file = self.read_json()
 
-        if not job_id in list(job_file.key()):
+        if not job_id in list(job_file.keys()):
             return Response(response=f'JOB_ID_DOES_NOT_EXIST', status=404, mimetype='application/json')
 
 
 @Job.route('')
 class JobPost(Resource):
+    job_handler = JobHandler()
 
     @Job.expect(job_model)
     def post(self):
@@ -49,10 +50,11 @@ class JobPost(Resource):
             job데이터를 받아 job file에 저장합니다.
         """
         data = json.loads(request.data)
-        job_id = str(data['job_id'])
-        job_file = JobHandler.read_json()
+        job_id = data['job_id']
+        job_file = self.job_handler.read_json()
 
-        JobHandler.duplicate_check(job_id)
+        if job_file.get(job_id, None):
+            return Response(response=f'MESSAGE : JOB_ID_ALREADY_EXIST', status=409, mimetype='application/json')
 
         job_file[job_id] = {
             'job_name': data['job_name'],
@@ -60,27 +62,27 @@ class JobPost(Resource):
             'property': data['property']
         }
 
-        JobHandler.write_json(job_file)
+        self.job_handler.write_json(job_file)
 
-        return Response(response='JOB_CREATE_SUCCESS', status=201, mimetype='application/json')
+        return Response(response='MESSAGE : JOB_CREATE_SUCCESS', status=201, mimetype='application/json')
 
 
 # 전달 받은 job_id를 job.json 파일에 찾아 삭제/수정
-@Job.route('/<string:id>')
+@Job.route('/<string:job_id>')
 class JobUpdateDelete(Resource):
+    job_handler = JobHandler()
+
     def delete(self, job_id):
         """
             해당 job_id 데이터를 삭제합니다.
         """
-        job_file = JobHandler.read_json()
+        job_file = self.job_handler.read_json()
+        self.job_handler.existence_check(job_id)
 
-        JobHandler.existence_check(job_id)
+        del(job_file[job_id])
+        self.job_handler.write_json(job_file)
 
-        result = job_file.pop(job_id)
-
-        JobHandler.write_json(job_file)
-
-        return Response(response=f'{result}', status=204, mimetype='application/json')
+        return Response(response='MESSAGE : JOB_DELETE_SUCCESS', status=204, mimetype='application/json')
 
     @Job.expect(job_model)
     def put(self, job_id):
@@ -88,9 +90,8 @@ class JobUpdateDelete(Resource):
             해당 job_id 데이터를 수정합니다.
         """
         data = json.loads(request.data)
-        job_file = JobHandler.read_json()
-
-        JobHandler.existence_check(job_id)
+        job_file = self.job_handler.read_json()
+        self.job_handler.existence_check(job_id)
 
         """
             변경하고자 하는 job_id는 패스 파라미터로 url 에서 따오고
@@ -98,7 +99,7 @@ class JobUpdateDelete(Resource):
             이 경우 url에서 따온 job_id와 body에 담긴 job_id를 비교하는 로직
         """
         if str(job_id) != str(data['job_id']):
-            return Response(response='요청한 job_id와 json의 job_id가 일치하지 않습니다.', status=400, mimetype='application/json')
+            return Response(response='MESSAGE : DIS_MATCH_JOB_ID', status=400, mimetype='application/json')
 
         job_file[job_id] = {
             'job_name': data['job_name'],
@@ -106,24 +107,22 @@ class JobUpdateDelete(Resource):
             'property': data['property']
         }
 
-        JobHandler.write_json(job_file)
+        self.job_handler.write_json(job_file)
 
         return Response(response=f'{job_file[job_id]}', status=200, mimetype='application/json')
 
 
-@Job.route('/<string:id>/start')
+@Job.route('/<string:job_id>/start')
 class JobStart(Resource):
-    def get(self, id):
+    job_handler = JobHandler()
+
+    def get(self, job_id):
         '''
             전달받은 job_id를 job file에서 찾아 task들을 실행합니다.
         '''
-        with open('job.json', 'r') as f:
-            job_file = json.load(f)
+        job_file = self.job_handler.read_json()[str(job_id)]
 
-        if id not in job_file.keys():
-            return Response(response='실행하려는 데이터의 job_id가 존재하지 않습니다.', status=404, mimetype='application/json')
-
-        job_file = job_file[str(id)]
+        self.job_handler.existence_check(job_id)
 
         # task_list에서 task_order추출 (read가 먼저 시작된다고 가정)
         task_list = job_file['task_list']
