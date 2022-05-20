@@ -1,6 +1,8 @@
 import json
-
 import pandas as pd
+import os.path
+
+from collections import deque
 from flask import Response, request
 from flask_restx import Resource, Namespace, fields
 
@@ -162,7 +164,7 @@ class JobRetrieveUpdateDeleteView(Resource):
             status=200, mimetype='application/json'
         )
 
-
+'''
 @Job.route('/<string:job_id>/start')
 class JobStartView(Resource):
     job_handler = JobHandler()
@@ -210,3 +212,116 @@ class JobStartView(Resource):
                 return Response(response='%s' % df.to_json(), status=200, mimetype='application/json')
 
         return Response(response='task 실행에 실패하였습니다.', status=400, mimetype='application/json')
+'''
+
+
+class FindOrder:
+    """
+    김석재
+    DAG 를 활용해 순서를 정하는 함수
+    """
+
+    def __init__(self, task_list):
+        self.task_count = {}
+        self.task_list = task_list
+        self.qu = deque()
+        self.result = []
+        # _find_qu 함수를 재활용 하기위해 =1 값으로 통일
+        for x in self.task_list:
+            self.task_count[x] = 1
+
+    def _find_qu(self, qu=None):
+        """
+        실행 순서대로 큐를 쌓는 함수
+        첫번째만 qu가없어 모든 진입차수를 -1 해주고 시작한다
+        (시작값을 1로 줬기때문에 0을 찾는것과 마찬가지)
+        qu가 있을때는 qu다음에 나오는 값들의 진입값만 -1을 하고
+        진입차수가 0인것을 찾아 qu에 넣는다
+        """
+        if qu:
+            task_list = self.task_list[qu]
+        else:
+            task_list = self.task_list
+
+        for x in task_list:
+            self.task_count[x] -= 1
+
+            if self.task_count[x] == 0:
+                self.qu.append(x)
+
+    def __call__(self):
+        """
+        받은 데이터를 바탕으로 진입차수를 계산한 후
+        큐 스택이 없어질때까지 반목문을 돌며 순서를 찾는다
+        순환되는 데이터라면 큐 스택이 쌓이지않는다
+        """
+        for x in self.task_list:
+            for y in self.task_list[x]:
+                self.task_count[y] += 1
+        self._find_qu()
+
+        while self.qu:
+            select_qu = self.qu.popleft()
+            self.result.append(select_qu)
+            self._find_qu(select_qu)
+
+        if not self.result:
+            return "CIRCULATION_VALUE"
+
+        return self.result
+
+
+class TaskExcutor:
+    """
+    김석재
+    앞서 구한 순서를 바탕으로 task들을 실행 한다
+    이미 실행한 태스크로 결과값이 나와있다면 결과값을 제공
+    (현재는 중복되어있다는 말만 뜸)
+    """
+
+    def __init__(self, job_data):
+        self.job_data = job_data
+        self.in_path = f'./{self.job_data["property"]["read"]["filename"]}'
+        self.out_path = f'./{self.job_data["property"]["write"]["filename"]}'
+        self.exist = None
+        if os.path.isfile(self.out_path):
+            self.exist = "RESULT_ALREADY_EXIST"
+
+    def read(self):
+        self.df = pd.read_csv(self.in_path,self.job_data["property"]["read"]['sep'])
+
+    def drop(self):
+        if self.job_data["property"]["drop"]['column_name'] not in list(self.df.columns):
+            return Response(response='삭제하려는 column이 존재하지 않습니다.',
+                             status=404, mimetype='application/json')
+        self.df = self.df.drop("date", axis=1)
+
+    def write(self):
+        self.df.to_csv(self.out_path)
+
+
+@Job.route('/<string:id>/start')
+class JobStart(Resource):
+    
+    def __init__(self, nothing):
+        with open("job.json", "r") as f:
+            self.job_data = json.load(f)
+    
+    def _get_order(self, id):
+        finder = FindOrder(self.job_data[str(id)]["task_list"])
+        return finder()
+    
+    def get(self, id):
+        '''
+            전달받은 job_id를 job file에서 찾아 task들을 실행합니다.
+        '''         
+        
+        task_excutor = TaskExcutor(self.job_data[str(id)])
+        if task_excutor.exist:
+            return Response(response='task 실행에 실패하였습니다.', status=400, mimetype='application/json') 
+
+        for task in self._get_order(id):
+            result = getattr(task_excutor, task)()
+            if result:
+                return result                
+        return Response(response=task_excutor.df.to_json(), status=200, mimetype='application/json')
