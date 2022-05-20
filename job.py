@@ -108,7 +108,6 @@ class JobRetrieveUpdateDeleteView(Resource):
         """
         job_file = self.job_handler.read_json()
 
-        print(job_file.get(str(job_id), None))
         if job_file.get(str(job_id), None) is None:
             return Response(
                 response='MESSAGE : JOB_ID_DOES_NOT_EXIST',
@@ -160,7 +159,7 @@ class JobRetrieveUpdateDeleteView(Resource):
 
         return Response(
             response=f'MESSAGE : SUCCESS,\nDATA = \n{job_file[job_id]}',
-            status=200, mimetype='application/json'
+            status=204, mimetype='application/json'
         )
 
 
