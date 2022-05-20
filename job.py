@@ -6,6 +6,7 @@ from collections import deque
 from flask import Response, request
 from flask_restx import Resource, Namespace, fields
 
+import pandas as pd
 
 """
     작성자 : 류성훈, 권상현
@@ -38,7 +39,7 @@ class JobHandler():
 
     def write_json(self, new_job):
         with open(self.FILE_PATH, 'w') as f:
-            json.dump(new_job, f, indent='\t')
+            json.dump(new_job, f, indent='\t', ensure_ascii=False)
 
 
 @Job.route('')
@@ -248,7 +249,7 @@ class TaskExcutor:
         self.df = self.df.drop("date", axis=1)
 
     def write(self):
-        self.df.to_csv(self.out_path)
+        self.df.to_csv(self.out_path, index=False)
 
 
 @Job.route('/<string:job_id>/start')

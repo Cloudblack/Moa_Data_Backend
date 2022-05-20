@@ -1,5 +1,4 @@
-import sys
-sys.path.append(".")
+import sys, os
 import pytest
 import json
 import app
@@ -9,12 +8,14 @@ from job import JobHandler
     류성훈
 """
 
-class TestJob:
+class TestAPI:
+# job과 관련된 API test
 
     FILE_PATH = './job.json'
 
     job_handler = JobHandler()
 
+    # 테스트용 데이터들
     test_data = {
                     "job_id": "test", 
                     "job_name": "Test",
@@ -44,6 +45,7 @@ class TestJob:
                                 "drop" : {"task_name": "drop", "column_name": "date"}, 
                                 "write" : {"task_name": "write", "filename" : "path/to/b.csv", "sep": ","}}
                 }  
+
 
     @pytest.fixture
     def api(self):
@@ -80,7 +82,6 @@ class TestJob:
             content_type='application/json'
         )
         self.reset_data(api)
-
         assert resp.status_code == 201
 
 
@@ -92,7 +93,6 @@ class TestJob:
             content_type='application/json'
         )
         self.reset_data(api)
-
         assert resp.status_code == 409
         
 
@@ -101,7 +101,6 @@ class TestJob:
         resp = api.get(
             '/jobs'
             )
-
         assert resp.status_code == 200
 
 
@@ -166,3 +165,31 @@ class TestJob:
         self.reset_data(api)
         assert resp.status_code == 400
 
+
+    def test_task_start(self, api, generate_data):
+        # task이 정상 실행 되는지 test
+        resp = api.get(
+            'jobs/test/start'
+        )
+        with open(self.FILE_PATH, 'r') as f:
+            job_file = json.load(f)
+
+        self.reset_data(api)
+        os.remove(job_file['test']['property']['write']['filename'])
+
+        assert resp.status_code == 200
+
+    def test_task_start_exist(self, api, generate_data):
+        # write 하려는 파일명이 이미 존재할 때
+        with open(self.FILE_PATH, 'r') as f:
+            job_file = json.load(f)
+
+        file = open(job_file['test']['property']['write']['filename'],'a+')
+
+        resp = api.get(
+            'jobs/test/start'
+        )
+
+        self.reset_data(api)
+        os.remove(job_file['test']['property']['write']['filename'])
+        assert resp.status_code == 400
