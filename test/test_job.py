@@ -119,7 +119,7 @@ class TestJob:
         resp = api.delete(
             '/jobs/test'
         )
-        assert resp.status_code == 200
+        assert resp.status_code == 204
 
 
     def test_job_delete_not_exist(self, api):
@@ -143,7 +143,7 @@ class TestJob:
 
         self.reset_data(api)
         assert job_file['test']['job_name'] == self.put_data['job_name']
-        assert resp.status_code == 204 
+        assert resp.status_code == 200
         
     
     def test_job_put_not_exist(self, api):

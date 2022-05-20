@@ -168,7 +168,7 @@
 		}
 	},
 	"100": {
-		"job_name": "Job100한글",
+		"job_name": "Job100\ud55c\uae00",
 		"task_list": {
 			"read": [
 				"drop"
@@ -196,7 +196,7 @@
 		}
 	},
 	"15": {
-		"job_name": "Job15한글",
+		"job_name": "Job15\ud55c\uae00",
 		"task_list": {
 			"read": [
 				"drop"
@@ -224,7 +224,7 @@
 		}
 	},
 	"102": {
-		"job_name": "Job102한글",
+		"job_name": "Job102\ud55c\uae00",
 		"task_list": {
 			"read": [
 				"drop"
@@ -252,7 +252,7 @@
 		}
 	},
 	"132": {
-		"job_name": "Job132한글",
+		"job_name": "Job132\ud55c\uae00",
 		"task_list": {
 			"read": [
 				"drop"
@@ -280,7 +280,7 @@
 		}
 	},
 	"19": {
-		"job_name": "Job19한글영어일어",
+		"job_name": "Job19\ud55c\uae00\uc601\uc5b4\uc77c\uc5b4",
 		"task_list": {
 			"read": [
 				"drop"

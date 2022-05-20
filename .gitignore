@@ -519,9 +519,3 @@ zsdoc/data
 !/tests/_output/.gitkeep
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,python,flask,pycharm,visualstudiocode,linux,vim,zsh,venv
-
-example/
-
-job_change copy.json
-job_change.json
-test.ipynb
