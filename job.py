@@ -164,56 +164,6 @@ class JobRetrieveUpdateDeleteView(Resource):
             status=200, mimetype='application/json'
         )
 
-'''
-@Job.route('/<string:job_id>/start')
-class JobStartView(Resource):
-    job_handler = JobHandler()
-
-    def get(self, job_id):
-        """
-            전달받은 job_id를 job file에서 찾아 task들을 실행합니다.
-        """
-        job_file = self.job_handler.read_json()[str(job_id)]
-
-        self.job_handler.existence_check(job_id)
-
-        # task_list에서 task_order추출 (read가 먼저 시작된다고 가정)
-        task_list = job_file['task_list']
-        task_order = []
-
-        cur = 'read'
-        while True:
-            if task_list[cur] == []:
-                task_order.append(cur)
-                break
-            else:
-                task_order.append(cur)
-                cur = task_list[cur][0]
-
-        tasks_property = job_file['property']
-
-        # task 기능별로 실행
-        for task in task_order:
-            task_property = tasks_property[task]
-            if task == 'read':
-                # read path/to/a.csv to DataFrame
-                df = pd.read_csv(
-                    task_property['filename'], sep=task_property['sep'])
-            elif task == 'drop':
-                if task_property['column_name'] not in list(df.columns):
-                    Response(response='삭제하려는 column이 존재하지 않습니다.',
-                             status=404, mimetype='application/json')
-                else:
-                    df = df.drop([task_property['column_name']],
-                                 axis='columns')
-            elif task == 'write':
-                df.to_csv(
-                    task_property['filename'], sep=task_property['sep'], na_rep='NaN', index=False)
-                return Response(response='%s' % df.to_json(), status=200, mimetype='application/json')
-
-        return Response(response='task 실행에 실패하였습니다.', status=400, mimetype='application/json')
-'''
-
 
 class FindOrder:
     """
@@ -288,40 +238,101 @@ class TaskExcutor:
             self.exist = "RESULT_ALREADY_EXIST"
 
     def read(self):
-        self.df = pd.read_csv(self.in_path,self.job_data["property"]["read"]['sep'])
+        self.df = pd.read_csv(
+            self.in_path, self.job_data["property"]["read"]['sep'])
 
     def drop(self):
         if self.job_data["property"]["drop"]['column_name'] not in list(self.df.columns):
-            return Response(response='삭제하려는 column이 존재하지 않습니다.',
-                             status=404, mimetype='application/json')
+            return Response(response='MESSAGE : COLUMN_DOES_NOT_EXIST',
+                            status=404, mimetype='application/json')
         self.df = self.df.drop("date", axis=1)
 
     def write(self):
         self.df.to_csv(self.out_path)
 
 
-@Job.route('/<string:id>/start')
+@Job.route('/<string:job_id>/start')
 class JobStart(Resource):
-    
-    def __init__(self, nothing):
-        with open("job.json", "r") as f:
-            self.job_data = json.load(f)
-    
-    def _get_order(self, id):
-        finder = FindOrder(self.job_data[str(id)]["task_list"])
+
+    def __init__(self, _):
+        self.job_data = JobHandler().read_json()
+
+    def _get_order(self, job_id):
+        finder = FindOrder(self.job_data[str(job_id)]["task_list"])
         return finder()
-    
-    def get(self, id):
+
+    def get(self, job_id):
         '''
             전달받은 job_id를 job file에서 찾아 task들을 실행합니다.
-        '''         
-        
-        task_excutor = TaskExcutor(self.job_data[str(id)])
-        if task_excutor.exist:
-            return Response(response='task 실행에 실패하였습니다.', status=400, mimetype='application/json') 
+        '''
 
-        for task in self._get_order(id):
+        task_excutor = TaskExcutor(self.job_data[str(job_id)])
+        if task_excutor.exist:
+            return Response(
+                response='MESSAGE : TASK_ALREADY_EXIST', 
+                status=400, mimetype='application/json'
+            )
+
+        for task in self._get_order(job_id):
             result = getattr(task_excutor, task)()
             if result:
-                return result                
-        return Response(response=task_excutor.df.to_json(), status=200, mimetype='application/json')
+                return result
+
+        return Response(
+            response=task_excutor.df.to_json(), 
+            status=200, mimetype='application/json'
+        )
+
+
+'''
+@Job.route('/<string:job_id>/start')
+class JobStartView(Resource):
+    """
+        류성훈
+    """
+    job_handler = JobHandler()
+
+    def get(self, job_id):
+        """
+            전달받은 job_id를 job file에서 찾아 task들을 실행합니다.
+        """
+        job_file = self.job_handler.read_json()[str(job_id)]
+
+        self.job_handler.existence_check(job_id)
+
+        # task_list에서 task_order추출 (read가 먼저 시작된다고 가정)
+        task_list = job_file['task_list']
+        task_order = []
+
+        cur = 'read'
+        while True:
+            if task_list[cur] == []:
+                task_order.append(cur)
+                break
+            else:
+                task_order.append(cur)
+                cur = task_list[cur][0]
+
+        tasks_property = job_file['property']
+
+        # task 기능별로 실행
+        for task in task_order:
+            task_property = tasks_property[task]
+            if task == 'read':
+                # read path/to/a.csv to DataFrame
+                df = pd.read_csv(
+                    task_property['filename'], sep=task_property['sep'])
+            elif task == 'drop':
+                if task_property['column_name'] not in list(df.columns):
+                    Response(response='삭제하려는 column이 존재하지 않습니다.',
+                             status=404, mimetype='application/json')
+                else:
+                    df = df.drop([task_property['column_name']],
+                                 axis='columns')
+            elif task == 'write':
+                df.to_csv(
+                    task_property['filename'], sep=task_property['sep'], na_rep='NaN', index=False)
+                return Response(response='%s' % df.to_json(), status=200, mimetype='application/json')
+
+        return Response(response='task 실행에 실패하였습니다.', status=400, mimetype='application/json')
+'''
