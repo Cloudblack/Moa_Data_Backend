@@ -6,6 +6,7 @@ from collections import deque
 from flask import Response, request
 from flask_restx import Resource, Namespace, fields
 
+import pandas as pd
 
 """
     작성자 : 류성훈, 권상현
@@ -38,7 +39,7 @@ class JobHandler():
 
     def write_json(self, new_job):
         with open(self.FILE_PATH, 'w') as f:
-            json.dump(new_job, f, indent='\t')
+            json.dump(new_job, f, indent='\t', ensure_ascii=False)
 
 
 @Job.route('')
@@ -248,7 +249,7 @@ class TaskExcutor:
         self.df = self.df.drop("date", axis=1)
 
     def write(self):
-        self.df.to_csv(self.out_path)
+        self.df.to_csv(self.out_path, index=False)
 
 
 @Job.route('/<string:job_id>/start')
@@ -291,19 +292,15 @@ class JobStartView(Resource):
         류성훈
     """
     job_handler = JobHandler()
-
     def get(self, job_id):
         """
             전달받은 job_id를 job file에서 찾아 task들을 실행합니다.
         """
         job_file = self.job_handler.read_json()[str(job_id)]
-
         self.job_handler.existence_check(job_id)
-
         # task_list에서 task_order추출 (read가 먼저 시작된다고 가정)
         task_list = job_file['task_list']
         task_order = []
-
         cur = 'read'
         while True:
             if task_list[cur] == []:
@@ -312,9 +309,7 @@ class JobStartView(Resource):
             else:
                 task_order.append(cur)
                 cur = task_list[cur][0]
-
         tasks_property = job_file['property']
-
         # task 기능별로 실행
         for task in task_order:
             task_property = tasks_property[task]
@@ -333,6 +328,5 @@ class JobStartView(Resource):
                 df.to_csv(
                     task_property['filename'], sep=task_property['sep'], na_rep='NaN', index=False)
                 return Response(response='%s' % df.to_json(), status=200, mimetype='application/json')
-
         return Response(response='task 실행에 실패하였습니다.', status=400, mimetype='application/json')
 '''
