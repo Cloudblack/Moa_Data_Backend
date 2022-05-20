@@ -168,7 +168,7 @@
 		}
 	},
 	"100": {
-		"job_name": "Job100\ud55c\uae00",
+		"job_name": "Job100한글",
 		"task_list": {
 			"read": [
 				"drop"
@@ -223,13 +223,8 @@
 			}
 		}
 	},
-<<<<<<< HEAD
-	"16": {
-		"job_name": "Job16한글",
-=======
 	"102": {
-		"job_name": "Job102\ud55c\uae00",
->>>>>>> 1f9ffa2ec0e382232b2be905f9bd87af0d9af0eb
+		"job_name": "Job102한글",
 		"task_list": {
 			"read": [
 				"drop"
@@ -256,13 +251,8 @@
 			}
 		}
 	},
-<<<<<<< HEAD
-	"17": {
-		"job_name": "Job17한글",
-=======
 	"132": {
-		"job_name": "Job132\ud55c\uae00",
->>>>>>> 1f9ffa2ec0e382232b2be905f9bd87af0d9af0eb
+		"job_name": "Job132한글",
 		"task_list": {
 			"read": [
 				"drop"
@@ -289,36 +279,8 @@
 			}
 		}
 	},
-	"18": {
-		"job_name": "Job18한글",
-		"task_list": {
-			"read": [
-				"drop"
-			],
-			"drop": [
-				"write"
-			],
-			"write": []
-		},
-		"property": {
-			"read": {
-				"task_name": "read",
-				"filename": "path/to/a.csv",
-				"sep": ","
-			},
-			"drop": {
-				"task_name": "drop",
-				"column_name": "date"
-			},
-			"write": {
-				"task_name": "write",
-				"filename": "path/to/b.csv",
-				"sep": ","
-			}
-		}
-	},
-	"23": {
-		"job_name": "Job23_1",
+	"19": {
+		"job_name": "Job19한글영어일어",
 		"task_list": {
 			"read": [
 				"drop"
