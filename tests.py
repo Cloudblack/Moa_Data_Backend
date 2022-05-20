@@ -146,7 +146,7 @@ class TestAPI:
         
     
     def test_job_put_not_exist(self, api):
-        # 수정하려는 데이터의 job_id가 존재하지 않은 경우
+        # 수정하려는 데이터의 job_id가 존재하지 않는 경우
         resp = api.put(
             '/jobs/test_not_exist',
             data=json.dumps(self.put_data),
@@ -156,7 +156,7 @@ class TestAPI:
 
 
     def test_job_put_dismatch(self, api, generate_data):
-        # parameter job_id와 request body 의 job_id가 일치하지 않은 경우
+        # parameter job_id와 request body 의 job_id가 일치하지 않는 경우
         resp = api.put(
             '/jobs/test',
             data=json.dumps(self.put_data_1),
@@ -184,13 +184,16 @@ class TestAPI:
         with open(self.FILE_PATH, 'r') as f:
             job_file = json.load(f)
 
-        file = open(job_file['test']['property']['write']['filename'],'a+')
+        OUT_DIR = job_file['test']['property']['write']['filename']
+
+        if not os.path.isfile(OUT_DIR):
+            file = open(OUT_DIR,'a+')
 
         resp = api.get(
             'jobs/test/start'
         )
         self.reset_data(api)
-        os.remove(job_file['test']['property']['write']['filename'])
+        os.remove(OUT_DIR)
         assert resp.status_code == 400
 
     
