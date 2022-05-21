@@ -11,12 +11,12 @@
 - [프로젝트 설명 분석](#-프로젝트-설명--분석)
 - [프로젝트 개발 조건](#-개발-조건)
 - [프로젝트 요구 조건](#-요구-조건)  
-- [기술 스택](#사용된-기술-스택)
-- [구현 기능](#구현-기능)  
-- [API 명세서](#api-명세서)  
+- [기술 스택](#-사용된-기술-스택)
+- [구현 기능](#-구현-기능)  
+- [API 명세서](#-api-명세서)  
 - [DFD](#dfd)
-- [Test cases ](#test-case) 
-- [프로젝트 후기](#프로젝트-후기)
+- [Test cases ](#-test-case) 
+- [프로젝트 후기](#-프로젝트-후기)
 
 <div align="center">  
 
@@ -40,8 +40,8 @@
 
   <h2> ⌛ 개발 기간  </h2> 
   2022/05/16  ~ 2022/05/21 
-![image](https://user-images.githubusercontent.com/86827063/169651914-9d4b8629-62d4-4b76-9288-5bc7571d4b07.png)
-
+  
+  <img src = "https://user-images.githubusercontent.com/86827063/169651914-9d4b8629-62d4-4b76-9288-5bc7571d4b07.png" width="40%">
   
 # 💻 Project
   ### 💭 프로젝트 설명 & 분석
@@ -65,7 +65,7 @@
     * 예시: read(a.csv) -> drop(date) -> write(b.csv) 
 
 
-  ### 🧹 사용된 기술 스택
+### 🧹 사용된 기술 스택
 
 > - Back-End :  <img src="https://img.shields.io/badge/Python 3.10-3776AB?style=flat&logo=Python&logoColor=white"/>&nbsp;<img src ="https://img.shields.io/badge/flask-%23000.svg?style=flat-badge&logo=flask&logoColor=white">&nbsp;<img alt="Python" src ="https://img.shields.io/badge/pandas-3776AB.svg?&style=flat-badage&logo=pandas&logoColor=white"/>
 > 
