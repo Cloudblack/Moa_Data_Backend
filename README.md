@@ -95,7 +95,7 @@
 <br>
 
 ### DFD
-사진 첨부 예정
+![image](https://user-images.githubusercontent.com/86823305/169633875-21d79f12-eb2f-4362-9cad-96d777138c2b.png)
 
 <br>
 
