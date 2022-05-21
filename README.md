@@ -42,11 +42,14 @@
   2022/05/16  ~ 2022/05/21 
   
   <img src = "https://user-images.githubusercontent.com/86827063/169651914-9d4b8629-62d4-4b76-9288-5bc7571d4b07.png" width="40%">
+<br>
   
 # 💻 Project
   ### 💭 프로젝트 설명 & 분석
   - DAG 알고리즘을 사용한 json 파일 처리 API 설계
   - Pandas를 활용하여 csv 파일의 데이터 가공
+
+<br>
 
   ### 🛠 개발 조건
   - a.csv 파일은 있는 것으로 전제, 컬럼과 데이터는 자유롭게 생성
@@ -56,6 +59,8 @@
   - drop : 지정한 컬럼을 제거한 후 DataFrame 반환
   - write : 지정된 파일 경로로 csv 파일 저장
 
+<br>
+
  ### 📰 요구 조건
      REST API 기능
   - job 저장 : 전달받은 job 정보를 json 파일에 저장
@@ -64,6 +69,7 @@
   - job 실행: 전달 받은 Job id를 job.json 파일에서 찾아 task들을 실행
     * 예시: read(a.csv) -> drop(date) -> write(b.csv) 
 
+<br>
 
 ### 🧹 사용된 기술 스택
 
@@ -71,6 +77,7 @@
 > 
 > - ETC　　　  <img src="https://img.shields.io/badge/Git-F05032?style=flat-badge&logo=Git&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/Github-181717?style=flat-badge&logo=Github&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/Swagger-FF6C37?style=flat-badge&logo=Swagger&logoColor=white"/>&nbsp;
 
+<br>
 
  ### 🧨 구현 기능 
  - [x] job 저장
