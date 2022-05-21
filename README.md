@@ -1,8 +1,8 @@
 <div align="center">
 
-  # Wanted Backend Pre Onboarding Project 002
+  # Wanted Backend Pre Onboarding Project 004
     
-![](../3076738490_20220125121000_7714646312.jpg)
+![3076738490_20220125121000_7714646312](https://user-images.githubusercontent.com/86827063/169651848-18c03bdb-7f33-43cf-85cb-43369546df89.jpg)
 </div>
 
 ## 목차
@@ -40,6 +40,7 @@
 
   <h2> ⌛ 개발 기간  </h2> 
   2022/05/16  ~ 2022/05/21 
+![image](https://user-images.githubusercontent.com/86827063/169651914-9d4b8629-62d4-4b76-9288-5bc7571d4b07.png)
 
   
 # 💻 Project
@@ -77,8 +78,8 @@
  - [x] job 수정
  - [x] job 실행
  - [x] API 명세서
- - [] DFD, Sequence Diagram
- - [ ] REST API 각 기능의 Unit Test
+ - [x] DFD, Sequence Diagram
+ - [x] REST API 각 기능의 Unit Test
 
 <br>
 
@@ -100,8 +101,7 @@
 <br>
 
 ### 📑 TEST CASE
-- ~ 개의 테스트 작성
-- 사진 추가 예정
+- 11 개의 테스트 작성
 
 <br>
 
@@ -151,11 +151,16 @@ DFD를 처음으로 만들어 보았는데 다 만들고 나니까 이전에 복
 <div markdown="1">
 
 >구현한 기능
-- 요구사항 분석
-- REST API 설계
-- Unit Test 작성
+    - 요구사항 분석
+    - REST API 설계
+    - API명세서(Swagger) 작성
+    - pytest 사용하여 Unit Test 작성
 > 느낀점
-- 
+- 팀원들과 같은 문서를 읽고 분석하면서 받아들이는 요구사항의 관점의 차이가 있다는 것을 느꼈습니다. 
+      다양한 관점에서 문제를 해석한 후에 괜찮은 해결점에 도달했다는 점이 인상깊었습니다.
+- 마이크로 프레임워크인 Flask를 사용하여 API를 만드는 것은 자유도가 높지만, 그만큼 꼼꼼함이 필요하다는 것을 느꼈습니다.
+- 몇 개의 Swagger 데코레이터를 붙여서 API명세서를 작성할 수 있다는 점이 좋았고 편리했습니다.
+- 유닛테스트를 통하여 코드의 신뢰를 얻는 만큼 정확하고, 빠지는부분이 없어야만 한다는 것을 느꼈습니다.
 
 </div>
 </details>
@@ -169,7 +174,11 @@ DFD를 처음으로 만들어 보았는데 다 만들고 나니까 이전에 복
 - REST API 설계
 - READ.md, Notion 작성 (문서화)
 > 느낀점
--
+  
+- 하나의 요구사항에서도 여러 의견이 나와 놓칠 수 있는 부분들을 챙길 수 있었다는 점에서 서로의 피드백을 받아 들이면 견고한 프로젝트가 될 수 있다는 것을 느꼈습니다.
+- 3일간 각자 작성해본 REST API는 [저의 코드](https://github.com/wanted-pre-onboarding-2nd-BE-Team-D/004_Moa_Data/tree/nxxxtyetdecided)는 클래스화를 통해서 깔끔해졌지만 에러처리에서 부족함이 있었습니다. 팀원들의 코드를 통해서 어떤 식의 에러처리가 좋은 지 배울 수 있었습니다.
+- 코드를 깔끔하게 하는 것도 좋지만 기한을 맞추지 못한다면 아무 의미가 없는 것을 느꼈습니다. 기능 개발을 해놓고 이후에 고도화하는 것이 좋은 프로세스임을 느껴 적용하도록 노력     했습니다.
+- 코드를 잘 짜는 것도 좋지만, 좋은 커뮤니케이션을 위해 읽는 사람에게읽기 쉬운 문서화를 작성하는 것도 중요하다는 것을 배웠습니다.
       
 </div>
 </details>
